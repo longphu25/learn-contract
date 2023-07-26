@@ -30,7 +30,7 @@ jobs:
           DEPLOY=$(npx thirdweb deploy --ci --key "$THIRDWEB_SECRET" | grep -Eo "$THIRDWEB_REGEX" | grep -Eo 'http.+')
           echo "::set-output name=stdout::$DEPLOY"
           echo "deploy_url: $DEPLOY"
-          exit 1
+          exit 0
         env:
           THIRDWEB_SECRET: ${{ secrets.ThirdwebSecret }}
           THIRDWEB_REGEX: 'Open this link to deploy your contracts: http.+'
