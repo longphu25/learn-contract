@@ -30,7 +30,8 @@ jobs:
         if: github.event_name == 'push' || github.ref != format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
           DEPLOY=$(npx thirdweb deploy --ci --key "$THIRDWEB_SECRET" | grep -Eo "$THIRDWEB_REGEX" | grep -Eo 'http.+') &
-          echo "stdout=$DEPLOY" >> "$GITHUB_OUTPUT"
+          sleep 40 &&
+          echo "stdout=$DEPLOY" >> "$GITHUB_OUTPUT" &&
           echo "deploy_url: $DEPLOY"
         env:
           THIRDWEB_SECRET: ${{ secrets.ThirdwebSecret }}
