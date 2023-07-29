@@ -28,13 +28,19 @@ jobs:
       - name: Deploy
         id: deploy
         if: github.event_name == 'push' || github.ref != format('refs/heads/{0}', github.event.repository.default_branch)
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#example-of-a-multiline-string
         run: |
-          echo "DEPLOY=$(npx thirdweb deploy --ci --key "$THIRDWEB_SECRET" | grep -Eo "$THIRDWEB_REGEX" | grep -Eo 'http.+')" >> $GITHUB_ENV
-          echo "stdout=$DEPLOY" >> "$GITHUB_OUTPUT"
-          echo "deploy_url: $DEPLOY"
+          EOF=$(npx thirdweb deploy --ci --key "$THIRDWEB_SECRET" | grep -Eo "$THIRDWEB_REGEX" | grep -Eo 'http.+')
+          echo "DEPLOY<<$EOF" >> "$GITHUB_ENV"
+          echo "stdout=${{ env.DEPLOY }}" >> "$GITHUB_OUTPUT"
+          echo "deploy_url: ${{ env.DEPLOY }}"
         env:
           THIRDWEB_SECRET: ${{ secrets.ThirdwebSecret }}
           THIRDWEB_REGEX: 'Open this link to deploy your contracts: http.+'
+      - name: check the value DEPLOY
+        id: check_environment_variable
+        run: |
+          echo "${{ env.DEPLOY }}"
 
   comment_on_commit:
     runs-on: ubuntu-latest
